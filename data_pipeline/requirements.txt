@@ -1,0 +1,8 @@
+This Module 1 — Data Pipeline requires below libraries or packages
+
+requests
+beautifulsoup4
+pandas
+sqlite3
+
+The .py/ipynb file can be executed in either google colab or .vs code or any other notebook
