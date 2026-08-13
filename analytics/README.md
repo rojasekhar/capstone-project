@@ -48,7 +48,33 @@ Interpretation: Survivors cluster among younger passengers with higher fares. Th
 (v) Pair Plot of Key Features — Pair Plot
 Interpretation: The pair plot shows survival patterns across multiple variables simultaneously. Clear separation appears by sex, class, and fare, with survivors concentrated among women, first‑class, and higher‑fare passengers. 
 
-6. Exploratory/Standardization Check
+6. Exploratory/Standardization Check:
 Applied z-score scaling to age and fare.
 Before/after comparison confirmed mean ≈ 0 and std ≈ 1.
 
+7. Preprocessing - train/test split with stratification:
+split the data into train and test sets using a stratified split on the survived target. Stratification was necessary because survival is imbalanced (about 62% died vs 38% survived). Without stratification, the train/test sets could have skewed class distributions, leading to biased training and misleading evaluation. Stratification guarantees that both sets reflect the same class balance as the full dataset.
+
+8. preprocessing fit only on the training data:
+Implemented preprocessing with a ColumnTransformer inside a scikit‑learn Pipeline. Numeric features were imputed with the median and scaled with StandardScaler. Categorical features were imputed with the most frequent value and one‑hot encoded. All preprocessing steps were fit only on the training data and then applied in transform‑only mode to the test data, ensuring no leakage of test‑set information into training.
+
+9. Train three classifiers on the same stratified train/test split:
+Trained three classifiers — Logistic Regression, Decision Tree, and Random Forest — on the same stratified train/test split. Logistic Regression provided a linear baseline, the Decision Tree revealed interpretable rules (visualized with plot_tree), and the Random Forest improved accuracy through ensemble averaging. All models used the same preprocessing pipeline, fit only on the training data, ensuring no leakage of test‑set information.
+
+10. Evaluate all three models with: a confusion matrix, accuracy, precision, recall, F1 score, and an ROC curve with AUC:
+Evaluated three classifiers using confusion matrices, accuracy, precision, recall, F1 score, and ROC‑AUC. Logistic Regression provided a strong baseline, the Decision Tree offered interpretability at modest accuracy, and the Random Forest achieved the best overall performance. ROC curves confirmed that the Random Forest had the strongest ability to discriminate survivors from non‑survivors.
+
+11. Imbalance handling comparison:
+Trained Logistic Regression model and compared precision/recall/F1 across baseline, class weight and SMOTE variants.
+
+12. Hyperparameter tuning:
+Tuned the Random Forest over n_estimators, max_depth, and max_features using GridSearchCV. The best parameter set was reported, and refit the model with oob_score=True to obtain the out‑of‑bag score. The OOB score closely matched the test accuracy, confirming that the tuned Random Forest generalizes well without overfitting
+
+13. Regression side-task:
+Trained a multivariate linear regression to predict fare. The model achieved MAE ≈ 20, RMSE ≈ 30, R² ≈ 0.65, and Adjusted R² ≈ 0.63. The residual plot showed widening variance at higher predicted fares, indicating heteroscedasticity. This suggests linear regression captures general fare patterns but struggles with the extreme variability of high‑class fares.
+
+14. Model comparison table:
+Compared all the models with Accuracy, precision, Recall, F1 ROC-AUC scores. Among the classifiers, the Random Forest stands out as the best model.
+
+15. complete pipeline:
+Saved the complete fitted pipeline (preprocessing + Random Forest classifier) using joblib.dump. Reloading with joblib.load confirmed that the artifact works end‑to‑end on raw Titanic data, producing survival predictions without requiring manual preprocessing. This guarantees reproducibility and deployability of the model.
