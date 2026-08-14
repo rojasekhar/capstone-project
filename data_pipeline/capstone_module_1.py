@@ -18,7 +18,6 @@ import pandas as pd
 
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 
 base_url = "http://books.toscrape.com/catalogue/page-{}.html"
 
